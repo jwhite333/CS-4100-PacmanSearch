@@ -130,41 +130,6 @@ class FixedRandom:
  Data structures useful for implementing SearchAgents
 """
 
-class Fringe:
-    "A container for aggregating node paths during the search process"
-    def __init__(self, containerType):
-        self.containerType = containerType
-        if containerType == "stack":
-            self.container = Stack()
-        elif containerType == "queue":
-            self.container = Queue()
-        elif containerType == "priorityQueue":
-            self.container = PriorityQueue()
-        else:
-            raise ValueError("No container type defined for fringe")
-
-    def push(self, path, successor, priority=1):
-        if not isinstance(path, list):
-            path = [path]
-        path = path[:] + [successor]
-        if self.containerType != "priorityQueue":
-            self.container.push(path)
-        else:
-            self.container.push(path, priority)
-
-    def isEmpty(self):
-        return self.container.isEmpty()
-
-    def pop(self):
-        return self.container.pop()
-
-    def size(self):
-        return self.container.size()
-
-    # def print(self):
-    #     print("Fringe:")
-    #     return self.container.print()
-
 class Stack:
     "A container with a last-in-first-out (LIFO) queuing policy."
     def __init__(self):
@@ -182,15 +147,11 @@ class Stack:
         "Returns true if the stack is empty"
         return len(self.list) == 0
 
-    def __contains__(self, item):
-        return item in self.list
+    # def __contains__(self, item):
+    #     return item in self.list
     
-    def size(self):
-        return len(self.list)
-
-    # def print(self):
-    #     for item in self.list:
-    #         print(item)
+    # def size(self):
+    #     return len(self.list)
 
 class Queue:
     "A container with a first-in-first-out (FIFO) queuing policy."
@@ -212,8 +173,8 @@ class Queue:
         "Returns true if the queue is empty"
         return len(self.list) == 0
 
-    def __contains__(self, item):
-        return item in self.list
+    # def __contains__(self, item):
+    #     return item in self.list
 
 class PriorityQueue:
     """
@@ -253,8 +214,8 @@ class PriorityQueue:
         else:
             self.push(item, priority)
 
-    def __contains__(self, item):
-        return item in self.heap
+    # def __contains__(self, item):
+    #     return item in self.heap
 
 class PriorityQueueWithFunction(PriorityQueue):
     """
