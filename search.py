@@ -18,6 +18,8 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import string
+from util import Stack, Fringe
 
 class SearchProblem:
     """
@@ -72,6 +74,12 @@ def tinyMazeSearch(problem):
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
 
+# class GraphSearchAlgorith:
+#     BFS = 'BreadthFirstSearch'
+#     DFS = 'DepthFirstSearch'
+#     UCS = 'UniformCostSearch'
+#     ASTAR = 'AStar'
+
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
@@ -87,17 +95,126 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = Fringe("stack")
+    solution = []
+
+    # Initialize fringe
+    start = problem.getStartState().WEST
+    successors = problem.getSuccessors(start)
+    exploredNodes = [start]
+    for successor in successors:
+      fringe.push(start, successor)
+    
+    while True:
+      if fringe.isEmpty():
+        return []
+
+      # Pop from fringe
+      path = fringe.pop()
+      if len(path) == 0:
+        continue
+      node = path[-1][0]
+
+      # Goal check
+      if problem.isGoalState(node):
+        path.append(node)
+
+        # Remove 0=start and -1=goal
+        del path[0]
+        del path[-1]
+        for location in path:
+          solution = solution[:] + [location[1]]
+        return solution
+
+      # Explore only new nodes
+      if node not in exploredNodes:
+        exploredNodes.append(node)
+        for successor in problem.getSuccessors(node):
+          if successor[0] not in exploredNodes:
+            fringe.push(path, successor)
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = Fringe("queue")
+    solution = []
+
+    # Initialize fringe
+    start = problem.getStartState()
+    successors = problem.getSuccessors(start)
+    exploredNodes = [start]
+    for successor in successors:
+      fringe.push(start, successor)
+    
+    while True:
+      if fringe.isEmpty():
+        return []
+
+      # Pop from fringe
+      path = fringe.pop()
+      if len(path) == 0:
+        continue
+      node = path[-1][0]
+
+      # Goal check
+      if problem.isGoalState(node):
+        path.append(node)
+
+        # Remove 0=start and -1=goal
+        del path[0]
+        del path[-1]
+        for location in path:
+          solution = solution[:] + [location[1]]
+        return solution
+
+      # Explore only new nodes
+      if node not in exploredNodes:
+        exploredNodes.append(node)
+        for successor in problem.getSuccessors(node):
+          if successor[0] not in exploredNodes:
+            fringe.push(path, successor)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = Fringe("priorityQueue")
+    solution = []
+
+    # Initialize fringe
+    start = problem.getStartState()
+    successors = problem.getSuccessors(start)
+    exploredNodes = [start]
+    for successor in successors:
+      fringe.push(start, successor, successor[2])
+    
+    while True:
+      if fringe.isEmpty():
+        return []
+
+      # Pop from fringe
+      path = fringe.pop()
+      if len(path) == 0:
+        continue
+      node = path[-1][0]
+
+      # Goal check
+      if problem.isGoalState(node):
+        path.append(node)
+
+        # Remove 0=start and -1=goal
+        del path[0]
+        del path[-1]
+        for location in path:
+          solution = solution[:] + [location[1]]
+        return solution
+
+      # Explore only new nodes
+      if node not in exploredNodes:
+        exploredNodes.append(node)
+        for successor in problem.getSuccessors(node):
+          if successor[0] not in exploredNodes:
+            fringe.push(path, successor, successor[2])
 
 def nullHeuristic(state, problem=None):
     """
@@ -109,7 +226,44 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe = Fringe("priorityQueue")
+    solution = []
+
+    # Initialize fringe
+    start = problem.getStartState()
+    successors = problem.getSuccessors(start)
+    exploredNodes = [start]
+    for successor in successors:
+      fringe.push(start, successor, successor[2])
+    
+    while True:
+      if fringe.isEmpty():
+        return []
+
+      # Pop from fringe
+      path = fringe.pop()
+      if len(path) == 0:
+        continue
+      node = path[-1][0]
+
+      # Goal check
+      if problem.isGoalState(node):
+        path.append(node)
+
+        # Remove 0=start and -1=goal
+        del path[0]
+        del path[-1]
+        for location in path:
+          solution = solution[:] + [location[1]]
+        return solution
+
+      # Explore only new nodes
+      if node not in exploredNodes:
+        exploredNodes.append(node)
+        for successor in problem.getSuccessors(node):
+          if successor[0] not in exploredNodes:
+            expectedCost = heuristic(successor[0], problem)
+            fringe.push(path, successor, expectedCost)
 
 
 # Abbreviations
