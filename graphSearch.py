@@ -71,7 +71,7 @@ class GraphSearch:
             path = self.fringe.pop()
             if len(path) == 0:
                 continue
-            node = path[-1][0]
+            node = path[-1]
 
             # Goal check
             if problem.isGoalState(node):
@@ -85,8 +85,8 @@ class GraphSearch:
                 return self.solution
 
             # Explore only new nodes
-            if node not in exploredNodes:
-                exploredNodes.append(node)
+            if node[0] not in exploredNodes:
+                exploredNodes.append(node[0])
                 for successor in problem.getSuccessors(node):
                     if successor[0] not in exploredNodes:
                         expectedCost = successor[2] + heuristic(successor[0], problem)
