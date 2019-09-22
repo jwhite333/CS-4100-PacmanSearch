@@ -199,6 +199,10 @@ class EightPuzzleSearchProblem(search.SearchProblem):
         return puzzle
 
     def isGoalState(self,state):
+        try:
+            state = state[0]
+        except TypeError:
+            pass
         return state.isGoal()
 
     def getSuccessors(self,state):
@@ -207,6 +211,10 @@ class EightPuzzleSearchProblem(search.SearchProblem):
           each succesor is either left, right, up, or down
           from the original state and the cost is 1.0 for each
         """
+        try:
+            state = state[0]
+        except TypeError:
+            pass
         succ = []
         for a in state.legalMoves():
             succ.append((state.result(a), a, 1))

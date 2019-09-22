@@ -37,7 +37,7 @@ Good luck and happy searching!
 from game import Directions
 from game import Agent
 from game import Actions
-from math import inf as infinity
+from graphSearch import GraphSearch, GraphSearchType
 import util
 import time
 import search
@@ -274,21 +274,6 @@ def euclideanHeuristic(position, problem, info={}):
 # This portion is incomplete.  Time to write code!  #
 #####################################################
 
-# class CornerFlags:
-#     BottomLeft = 8
-#     BottomRight = 4
-#     TopRight = 2
-#     TopLeft = 1
-
-# class CornersState:
-#     def __init__(self, position, cornerFlags):
-#         self.pacmanPosition = position
-#         self.cornerFlags = cornerFlags
-
-# location = state[0]
-# direction = state[1]
-# cost = state[2]
-
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -417,17 +402,27 @@ class FoodSearchProblem:
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
 
+    def getPositionAndFoodFromState(self, state):
+        try:
+            if len(state[0][0]) == 2:
+                return state[0]
+            else:
+                raise TypeError
+        except TypeError:
+            return state
+
     def getStartState(self):
         return self.start
 
     def isGoalState(self, state):
-        return state[1].count() == 0
+        return state[0][1].count() == 0
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
         successors = []
         self._expanded += 1 # DO NOT CHANGE
         for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            state = self.getPositionAndFoodFromState(state)
             x,y = state[0]
             dx, dy = Actions.directionToVector(direction)
             nextx, nexty = int(x + dx), int(y + dy)
@@ -487,7 +482,14 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    try:
+        if len(state[0][0]) == 2:
+            return state[0][1].count()
+        else:
+            raise TypeError
+    except TypeError:
+        return state[1].count()
+    # return 0
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -518,7 +520,8 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        bfs = GraphSearch(GraphSearchType.BFS)
+        return bfs.solve(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -546,15 +549,47 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         self.costFn = lambda x: 1
         self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
 
+    def getPositionFromState(self, state):
+        try:
+            if len(state[0]) == 2:
+                return state[0]
+            else:
+                raise TypeError
+        except TypeError:
+            return state
+
     def isGoalState(self, state):
         """
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
-        x,y = state
+        x,y = state[0]
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
+
+    def getSuccessors(self, state):
+        """
+        Returns successor states, the actions they require, and a cost of 1.
+
+         As noted in search.py:
+             For a given state, this should return a list of triples,
+         (successor, action, stepCost), where 'successor' is a
+         successor to the current state, 'action' is the action
+         required to get there, and 'stepCost' is the incremental
+         cost of expanding to that successor
+        """
+
+        successors = []
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            x,y = self.getPositionFromState(state)
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextState = (nextx, nexty)
+                cost = self.costFn(nextState)
+                successors.append( ( nextState, action, cost) )
+        return successors
 
 def mazeDistance(point1, point2, gameState):
     """

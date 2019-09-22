@@ -11,11 +11,11 @@ class Fringe:
     "A container for aggregating node paths during the search process"
     def __init__(self, searchType):
         self.searchType = searchType
-        if searchType == GraphSearchType.DFS:# "stack":
+        if searchType == GraphSearchType.DFS:
             self.container = util.Stack()
-        elif searchType == GraphSearchType.BFS:# "queue":
+        elif searchType == GraphSearchType.BFS:
             self.container = util.Queue()
-        elif searchType == GraphSearchType.UCS or searchType == GraphSearchType.ASTAR:# "priorityQueue":
+        elif searchType == GraphSearchType.UCS or searchType == GraphSearchType.ASTAR:
             self.container = util.PriorityQueue()
         else:
             raise ValueError("No container type defined for fringe")
@@ -35,12 +35,8 @@ class Fringe:
     def pop(self):
         return self.container.pop()
 
-    def size(self):
-        return self.container.size()
-
-    # def print(self):
-    #     print("Fringe:")
-    #     return self.container.print()
+    # def size(self):
+    #     return self.container.size()
 
 def nullHeuristic(state, problem=None):
     return 0
@@ -74,7 +70,7 @@ class GraphSearch:
             node = path[-1]
 
             # Goal check
-            if problem.isGoalState(node):
+            if problem.isGoalState(node[0]):
                 path.append(node)
 
                 # Remove 0=start and -1=goal
@@ -87,7 +83,7 @@ class GraphSearch:
             # Explore only new nodes
             if node[0] not in exploredNodes:
                 exploredNodes.append(node[0])
-                for successor in problem.getSuccessors(node):
+                for successor in problem.getSuccessors(node[0]):
                     if successor[0] not in exploredNodes:
                         expectedCost = successor[2] + heuristic(successor[0], problem)
                         self.fringe.push(path, successor, expectedCost)
