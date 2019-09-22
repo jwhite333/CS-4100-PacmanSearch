@@ -214,9 +214,6 @@ class PriorityQueue:
         else:
             self.push(item, priority)
 
-    # def __contains__(self, item):
-    #     return item in self.heap
-
 class PriorityQueueWithFunction(PriorityQueue):
     """
     Implements a priority queue with the same push/pop signature of the
