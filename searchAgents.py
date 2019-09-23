@@ -37,10 +37,10 @@ Good luck and happy searching!
 from game import Directions
 from game import Agent
 from game import Actions
-from graphSearch import GraphSearch, GraphSearchType
 import util
 import time
 import search
+from search import GraphSearch, GraphSearchType
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
